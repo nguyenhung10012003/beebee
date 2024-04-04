@@ -128,12 +128,19 @@ export class ProjectsService {
 
   async addMembers(id: string, userIds: string[]) {
     try {
-      return await this.dataSource
+      await this.dataSource
         .getRepository(Project)
         .createQueryBuilder('project')
         .relation(Project, 'members')
         .of(id)
         .add(userIds);
+
+      return await this.dataSource
+        .getRepository(Project)
+        .createQueryBuilder('project')
+        .leftJoinAndSelect('project.members', 'members')
+        .where('project.id = :id', { id })
+        .getOne();
     } catch (e) {
       console.log(e);
       return null;

@@ -14,6 +14,19 @@ export class Team {
   @Column()
   name: string;
 
+  @Field(
+    {
+      nullable: true,
+    },
+  )
+  @Column(
+    {
+      type: 'text',
+      nullable: true,
+    },
+  )
+  description: string;
+
   @Field()
   @CreateDateColumn()
   createdAt: Date;

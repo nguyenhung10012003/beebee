@@ -52,7 +52,7 @@ describe('UsersService', () => {
   });
 
   it('should find one user', async () => {
-    const result = await service.findOne('1');
+    const result = await service.findOneById('1');
     expect(result).toBeDefined();
   });
 

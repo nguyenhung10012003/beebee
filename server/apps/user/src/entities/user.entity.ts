@@ -2,15 +2,8 @@ import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn } f
 import { Directive, Field, ID, ObjectType } from '@nestjs/graphql';
 import { Team } from './team.entity';
 import { Project } from './project.entity';
-
-
-export enum Role {
-  ADMIN = 'ADMIN',
-  FREE = 'FREE',
-  BASIC = 'BASIC',
-  PREMIUM = 'PREMIUM',
-  SUPPORTER = 'SUPPORTER',
-}
+import { Token } from '../entities';
+import { Role } from '@app/common/enums';
 
 @ObjectType()
 @Entity()
@@ -62,4 +55,8 @@ export class User {
   @Field(type => [Project])
   @OneToMany((type) => Project, (project) => project.leader)
   projectsOwn: Project[];
+
+  @Field(type => [Token])
+  @OneToMany((type) => Token, (token) => token.user)
+  tokens: Token[];
 }

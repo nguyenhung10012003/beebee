@@ -24,6 +24,7 @@ export class TeamsService {
       // Create a new team object
       const newTeam = new Team();
       newTeam.name = createTeamInput.name;
+      newTeam.description = createTeamInput.description;
       newTeam.leader = leaderUser;
       newTeam.members = [leaderUser];
 
@@ -164,11 +165,12 @@ export class TeamsService {
         .leftJoinAndSelect('team.members', 'members')
         .where('team.id = :id', { id })
         .getOne();
+
     } catch (e) {
       console.log(e);
       if (e.code === 'ER_DUP_ENTRY') throw new Error('User already exists in the team');
       //Todo: call logger service
-      return null;
+      else throw new Error('Error adding members');
     }
   }
 

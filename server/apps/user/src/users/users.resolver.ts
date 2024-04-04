@@ -3,6 +3,7 @@ import { UsersService } from './users.service';
 import { Project, Team, User } from '../entities';
 import { CreateUserInput } from '../dto/create-user.input';
 import { UpdateUserInput } from '../dto/update-user.input';
+import { GraphQLError } from 'graphql/error';
 
 @Resolver(() => User)
 export class UsersResolver {
@@ -11,7 +12,12 @@ export class UsersResolver {
 
   @Mutation(() => User)
   async createUser(@Args('createUserInput') createUserInput: CreateUserInput) {
-    return await this.usersService.create(createUserInput);
+    try {
+      return await this.usersService.create(createUserInput);
+    } catch (e) {
+      if (e.code === 'ER_DUP_ENTRY') throw new GraphQLError('Email already exists');
+      else return new GraphQLError('Something went wrong');
+    }
   }
 
   @Query(() => [User], { name: 'users' })
@@ -21,7 +27,7 @@ export class UsersResolver {
 
   @Query(() => User, { name: 'userById' })
   async findOne(@Args('id', { type: () => String }) id: string) {
-    return await this.usersService.findOne(id);
+    return await this.usersService.findOneById(id);
   }
 
   @Query(() => [User], { name: 'usersByEmail' })

@@ -1,4 +1,13 @@
-import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { Directive, Field, ID, ObjectType } from '@nestjs/graphql';
 import { User } from './user.entity';
 
@@ -21,6 +30,10 @@ export class Project {
   @Field()
   @CreateDateColumn()
   createdAt: Date;
+
+  @Field()
+  @UpdateDateColumn()
+  updatedAt: Date;
 
   @Field()
   @Column(

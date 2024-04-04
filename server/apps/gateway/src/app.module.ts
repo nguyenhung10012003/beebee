@@ -1,9 +1,10 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
 import { AppService } from './app.service';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloGatewayDriver, ApolloGatewayDriverConfig } from '@nestjs/apollo';
 import { IntrospectAndCompose } from '@apollo/gateway';
 import { ConfigModule } from '@nestjs/config';
+import { ServiceRouterMiddleware } from './middlewares/service-router.middleware';
 
 @Module({
   imports: [
@@ -23,14 +24,6 @@ import { ConfigModule } from '@nestjs/config';
               name: 'user',
               url: `${process.env.USER_SERVICE_HOST_NAME}:${process.env.USER_SERVICE_PORT}/graphql`,
             },
-            {
-              name: 'logger',
-              url: `${process.env.LOGGER_SERVICE_HOST_NAME}:${process.env.LOGGER_SERVICE_PORT}/graphql`,
-            },
-            {
-              name: 'auth',
-              url: `${process.env.AUTH_SERVICE_HOST_NAME}:${process.env.AUTH_SERVICE_PORT}/graphql`,
-            },
           ],
         }),
       },
@@ -40,4 +33,9 @@ import { ConfigModule } from '@nestjs/config';
   providers: [AppService],
 })
 export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(ServiceRouterMiddleware)
+      .forRoutes({ path: '*', method: RequestMethod.ALL });
+  }
 }

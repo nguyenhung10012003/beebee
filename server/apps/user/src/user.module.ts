@@ -9,6 +9,7 @@ import entities from './entities';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloFederationDriver, ApolloFederationDriverConfig } from '@nestjs/apollo';
 import { AllowedAddressesMiddleware } from './middlwares/allowed-addresses.middleware';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { AllowedAddressesMiddleware } from './middlwares/allowed-addresses.middl
     UsersModule,
     TeamsModule,
     ProjectsModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [],

@@ -3,6 +3,7 @@ import { CreateUserInput } from '../dto/create-user.input';
 import { UpdateUserInput } from '../dto/update-user.input';
 import { DataSource } from 'typeorm';
 import { Project, Team, User } from '../entities';
+import { hashPassword } from '../utils/hashing';
 
 @Injectable()
 export class UsersService {
@@ -11,13 +12,14 @@ export class UsersService {
 
   async create(createUserInput: CreateUserInput) {
     try {
+      createUserInput.password = await hashPassword(createUserInput.password);
       return await this.dataSource
         .getRepository(User)
         .save(createUserInput);
     } catch (e) {
-      console.log(e.code);
-      if (e.code === 'ER_DUP_ENTRY') throw new Error('Email already exists');
-      else throw new Error('Something went wrong');
+      if (e.code === 'ER_DUP_ENTRY') {
+        throw new Error('Email already exists');
+      } else throw new Error('Something went wrong');
       //Todo call logger service
     }
   }
@@ -35,7 +37,7 @@ export class UsersService {
     }
   }
 
-  async findOne(id: string) {
+  async findOneById(id: string) {
     try {
       return await this.dataSource
         .getRepository(User)
@@ -56,6 +58,18 @@ export class UsersService {
         .createQueryBuilder('user')
         .where('user.email LIKE :string', { string: `%${email}%` })
         .getMany();
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  async findOneByEmail(email: string) {
+    try {
+      return await this.dataSource
+        .getRepository(User)
+        .createQueryBuilder('user')
+        .where('user.email = :email', { email })
+        .getOne();
     } catch (e) {
       console.log(e);
     }
